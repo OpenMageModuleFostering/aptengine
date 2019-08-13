@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    Whirl
+ * @package     Whirl_Productrecommendation
+ */
+-->
+<config>
+    <modules>
+        <Whirl_Productrecommendation>
+            <version>1.1.0</version>
+        </Whirl_Productrecommendation>
+    </modules>
+    <global>
+        <models>
+        	<productrecommendation>
+                <class>Whirl_Productrecommendation_Model</class>
+                <resourceModel>productrecommendation_resource</resourceModel>
+            </productrecommendation>
+            <productrecommendation_resource>
+                <class>Whirl_Productrecommendation_Model_Resource</class>
+                <entities>
+                    <wdfeed>
+                        <table>wd_feed</table>
+                    </wdfeed>
+                    <views>
+                        <table>wd_views_map</table>
+                    </views>
+                    <orders>
+                        <table>wd_orders_map</table>
+                    </orders>
+                    <feedhistory>
+                        <table>wd_schedule_history</table>
+                    </feedhistory>
+                </entities>
+            </productrecommendation_resource>
+        </models>
+        <resources>
+            <productrecommendation_setup>
+                <setup>
+                    <module>Whirl_Productrecommendation</module>
+                </setup>
+            </productrecommendation_setup>
+        </resources>
+        <helpers>
+            <productrecommendation>
+                <class>Whirl_Productrecommendation_Helper</class>
+            </productrecommendation>
+        </helpers>
+        <blocks>
+            <productrecommendation>
+            	<class>Whirl_Productrecommendation_Block</class>
+            </productrecommendation>
+        </blocks>
+        <events>
+            <catalog_controller_product_init_after>
+                <observers>
+                    <product_viewed>
+                        <class>productrecommendation/observer</class>
+                        <method>addProductViewedEntry</method>
+                    </product_viewed>
+                </observers>
+            </catalog_controller_product_init_after>
+        </events>
+    </global>
+    <frontend>
+        <routers>
+            <productrecommendation>
+                <use>standard</use>
+                <args>
+                    <module>Whirl_Productrecommendation</module>
+                    <frontName>productrecommendation</frontName>
+                </args>
+            </productrecommendation>
+        </routers>
+        <translate>
+            <modules>
+                <Whirl_Productrecommendation>
+                    <files>
+                        <default>Whirl_Productrecommendation.csv</default>
+                    </files>
+                </Whirl_Productrecommendation>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <productrecommendation module="Whirl_Productrecommendation">
+                    <file>productrecommendation.xml</file>
+                </productrecommendation>
+            </updates>
+        </layout>
+    </frontend>
+    <admin>
+         <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <productrecommendation after="Mage_Adminhtml">Whirl_Productrecommendation</productrecommendation>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Whirl_Productrecommendation>
+                    <files>
+                        <default>Whirl_Productrecommendation.csv</default>
+                    </files>
+                </Whirl_Productrecommendation>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <productrecommendation>
+                    <file>productrecommendation.xml</file>
+                </productrecommendation>
+            </updates>
+        </layout>
+    </adminhtml>
+    <default>
+    	<whirl>
+    		<alsoviewed>
+    			<title>People also viewed</title>
+    			<active>1</active>
+    			<schedule>*/30 * * * *</schedule>
+    		</alsoviewed>
+    		<alsoordered>
+    			<title>Frequently bought together</title>
+    			<active>1</active>
+    			<schedule>*/30 * * * *</schedule>
+    		</alsoordered>
+    		<cartrecommended>
+    			<title>Cart page recommedation</title>
+    			<active>0</active>
+    			<default_sku>msj009,msj012c</default_sku>
+    		</cartrecommended>
+    	</whirl>
+    </default>
+    <crontab>
+        <jobs>
+            <wd_feed_product_refered>
+                <schedule>
+                	<config_path>whirl/alsoviewed/schedule</config_path>
+                    <!-- <cron_expr>*/30 * * * *</cron_expr> -->
+                </schedule>
+                <run>
+                    <model>productrecommendation/observer::populateProductReferedCount</model>
+                </run>
+            </wd_feed_product_refered>
+            <wd_feed_order_associated>
+                <schedule>
+                	<config_path>whirl/alsoordered/schedule</config_path>
+                    <!-- <cron_expr>*/10 * * * *</cron_expr> -->
+                </schedule>
+                <run>
+                    <model>productrecommendation/observer::populateOrderAssociatedCount</model>
+                </run>
+            </wd_feed_order_associated>
+        </jobs>
+    </crontab>
+</config>

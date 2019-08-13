@@ -1,0 +1,75 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+
+<?php
+/**
+ * Template for displaying product price in different places (products grid, product view page etc)
+ *
+ * @see Mage_Adminhtml_Block_Catalog_Product_Price
+ */
+?>
+<?php
+    /** @var $_coreHelper Mage_Core_Helper_Data */
+    $_coreHelper        = $this->helper('core');
+    /** @var $_weeeHelper Mage_Weee_Helper_Data */
+    $_weeeHelper        = $this->helper('weee');
+    /** @var $_taxHelper Mage_Tax_Helper_Data */
+    $_taxHelper         = $this->helper('tax');
+
+    $_product           = $this->getProduct();
+    $_id                = $_product->getId();
+    $_storeId           = $_product->getStoreId();
+    $_website           = Mage::app()->getStore($_storeId)->getWebsite();
+
+    $_weeeSeparator     = '';
+    $_simplePricesTax   = ($_taxHelper->displayPriceIncludingTax() || $_taxHelper->displayBothPrices());
+    $_minimalPriceValue = $_product->getMinimalPrice();
+    $_minimalPrice      = $_taxHelper->getPrice($_product, $_minimalPriceValue, $_simplePricesTax);
+?>
+
+
+<?php
+$_exclTax = $_taxHelper->getPrice($_product, $_minimalPriceValue, $includingTax = null);
+$_inclTax = $_taxHelper->getPrice($_product, $_minimalPriceValue, $includingTax = true);
+?>
+<?php $_weeeTaxAmount = $_weeeHelper->getAmount($_product, null, null, $_website); ?>
+<?php if ($_weeeHelper->typeOfDisplay($_product, array(1,2,4))): ?>
+    <?php $_weeeTaxAmount = $_weeeHelper->getAmount($_product, null, null, $_website); ?>
+    <?php $_weeeTaxAttributes = $_weeeHelper->getProductWeeeAttributesForRenderer($_product, null, null, $_website); ?>
+<?php endif; ?>
+<?php $_price = $_taxHelper->getPrice($_product, $_product->getPrice()) ?>
+<?php $_regularPrice = $_taxHelper->getPrice($_product, $_product->getPrice(), $_simplePricesTax) ?>
+<?php $_finalPrice = $_taxHelper->getPrice($_product, $_product->getFinalPrice()) ?>
+<?php $_finalPriceInclTax = $_taxHelper->getPrice($_product, $_product->getFinalPrice(), true) ?>
+<?php $_weeeDisplayType = $_weeeHelper->getPriceDisplayType(); ?>
+
+	<?php echo $_product->getName();?>  - 
+	
+	<?php echo $_coreHelper->currencyByStore($_finalPrice, $_storeId, true, false) ?>
+	
+	<?php $inc++; echo $inc;?>
+	

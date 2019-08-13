@@ -1,0 +1,108 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    Whirl
+ * @package     Whirl_Productrecommendation
+ */
+?>
+
+<?php 
+	$_productCollection = $this->getAlsoOrderedProducts();
+	$_helper 			= $this->helper('catalog/output');
+	$_coreHelper        = $this->helper('core');
+	$_taxHelper         = $this->helper('tax');
+	if (($_productCollection != null) && ($_productCollection->count() > 1)):
+	  	$_collectionSize = $_productCollection->count();
+	    $_columnCount = 6;
+	    $_totalPrice = 0;
+?>
+	<div class="product-recommend-title">
+		<h2><?php echo $this->getBlockTitle(); ?></h2>
+	</div>
+	
+    <ul class="products-grid products-grid--max-<?php echo $_columnCount; ?>-col prod-recommend">
+	    <?php $i=0; foreach ($_productCollection as $_product): ?>
+	    <?php $hasRequired = $_product->getTypeInstance(true)->hasRequiredOptions($_product);?>
+	    <?php if($_product->isSaleable()): ?>
+			<?php if(!$hasRequired || $this->canShowRequired()):?>	    
+			<li class="item" id="product-<?php echo $_product->getSku();?>">
+	        	<a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="products-image">
+	            <?php $_imgSize = 140; ?>
+	            	<img id="product-collection-image-<?php echo $_product->getId(); ?>"
+	                	src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($_imgSize); ?>"
+	                    alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" />
+	           	</a>
+	           	<?php if($i + 1 < $_collectionSize):?>
+					<span class="plus-icon"> + </span>
+				<?php endif;?>
+			</li>
+			<?php endif;?>
+		<?php endif; $i++;?>
+		<?php endforeach ?>
+		<li class="price-box total">
+			<h4>Total Price: <span class="price product-total"></span></h4>
+			<input type="hidden" value="<?php echo $this->getAddAllItemsUrl(); ?>" class="add-cart-url" />
+			<button type="button" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Add to Cart')) ?>" 
+			class="button add-btn btn-cart add-single-item add-to-cart" onclick="setLocation('<?php echo $this->getPrimaryProductUrl();?>')" style="display:none;"><span><span>
+			<?php echo $this->__('Add to Cart') ?></span></span></button>
+			<button type="button" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Add All Items to Cart')) ?>" 
+			class="button add-btn btn-cart add-all-button" onclick="setLocation('<?php echo $this->getAddAllItemsUrl();?>')"><span><span>
+			<?php echo $this->__('Add All Items to Cart') ?></span></span></button>
+			<button type="button" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Add Selected Product(s)')) ?>" 
+			class="button add-btn btn-cart add-selected-button" ><span><span>
+			<?php echo $this->__('Add Selected Product(s)') ?></span></span></button>
+		</li>
+	</ul>
+	
+	<div class="actions">
+		<ul class="associate-product">
+		<?php foreach ($_productCollection as $_product):
+				if($_product->isSaleable()):
+					$_finalPrice = $_taxHelper->getPrice($_product, $_product->getFinalPrice()); 
+					$hasRequired = $_product->getTypeInstance(true)->hasRequiredOptions($_product);
+					$currentProduct = ($this->getCurrentSimpleSku() == $_product->getSku()) ? true : false;?>
+            	
+            	<?php if($hasRequired && $this->canShowRequired()):?>
+            	<li class="price-box">
+	            	<?php echo $_product->getName();?> 
+	            	<span class="price"><?php echo $_coreHelper->currencyByStore($_finalPrice, Mage::app()->getStore()->getId(), true, false) ?></span>
+	            	<p> * Required Options </p>
+            	</li>
+            	<?php endif;?>
+				<?php if(!$hasRequired):?>
+				<li class="price-box">
+					<?php $_totalPrice = $_totalPrice + $_finalPrice;?>
+            		<input type="checkbox" class="product-ordered" data-price="<?php echo $_finalPrice;?>" 
+            			checked="checked" value="<?php echo $_product->getId();?>" 
+            			label="<?php echo $_product->getName();?>" data-sku="<?php echo $_product->getSku();?>"
+            			<?php echo ($currentProduct) ? 'disabled' : '';?> />
+            		<b class="<?php echo (($currentProduct)? 'show-info': 'hide-info'); ?>">This Product: </b>
+            		<a href="<?php echo $_product->getProductUrl() ?>">
+            			<?php echo $_product->getName();?> 
+            		</a>
+            		<span class="price"><?php echo $_coreHelper->currencyByStore($_finalPrice, Mage::app()->getStore()->getId(), true, false) ?></span>
+            	</li>
+            	<?php endif; ?>
+            <?php endif; ?>
+        <?php endforeach;?>
+        </ul>
+	</div>
+	
+	<script type="text/javascript">
+		var addAllToCart = jQuery('.add-cart-url').val();
+		var curr = '<?php echo $this->getCurrencySym();?>';
+		var totalPrice = '<?php echo $_totalPrice;?>';
+	</script>
+<?php endif;?>
+

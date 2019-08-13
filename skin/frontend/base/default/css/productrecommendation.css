@@ -1,0 +1,44 @@
+@CHARSET "UTF-8";
+
+.hide-info {
+	display: none;
+}
+
+.widget-separator {
+	clear: both;
+}
+
+.prod-recommend .item {
+	margin-right: 0;
+	width: auto;
+}
+
+.prod-recommend .products-image {
+	float: left;
+}
+
+.products-recommend>li {
+	float: left;
+	width: auto;
+	position: relative;
+	margin-bottom: 40px;
+	margin-right: 40px;
+	text-align: center;
+}
+
+.product-recommend-title {
+	clear: both;
+	margin: 20px;
+}
+
+.add-btn {
+	margin: 5px;
+}
+
+.plus-icon {
+	display: inline-block;
+    margin-top: 40px;
+    margin-right: 10px;
+    font-size: 21px!important;
+    line-height: 1.3!important;
+}

@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/aptengine",
+    "name": "OpenMageModuleFostering\/aptengine",
     "type": "magento-module",
     "license": "OSL-v3.0",
     "homepage": "",
     "description": "Whirl recommendation engine enables the plugin in Product display and cart page.",
     "authors": [
-    {
-        "name": "Whirl",
-        "email": "Whirl@email.com"
-    }
-],
+        {
+            "name": "Whirl",
+            "email": "Whirl@email.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
